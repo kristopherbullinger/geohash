@@ -1,13 +1,14 @@
-#[derive(Debug, Clone, PartialEq)]
+use crate::core::Geohash;
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Neighbors {
-    pub sw: String,
-    pub s: String,
-    pub se: String,
-    pub w: String,
-    pub e: String,
-    pub nw: String,
-    pub n: String,
-    pub ne: String,
+    pub sw: Option<Geohash>,
+    pub s: Option<Geohash>,
+    pub se: Option<Geohash>,
+    pub w: Option<Geohash>,
+    pub e: Option<Geohash>,
+    pub nw: Option<Geohash>,
+    pub n: Option<Geohash>,
+    pub ne: Option<Geohash>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

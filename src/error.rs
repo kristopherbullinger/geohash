@@ -8,7 +8,6 @@ pub enum GeohashError {
     InvalidHashCharacter(char),
     InvalidCoordinateRange(Coord<f64>),
     InvalidLength(usize),
-    InvalidHash(String),
 }
 
 impl fmt::Display for GeohashError {
@@ -23,7 +22,6 @@ impl fmt::Display for GeohashError {
                 "Invalid length specified: {}. Accepted values are between 1 and 12, inclusive",
                 len
             ),
-            GeohashError::InvalidHash(msg) => write!(f, "Invalid input hash: {}", msg),
         }
     }
 }
