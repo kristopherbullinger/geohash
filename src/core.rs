@@ -125,6 +125,21 @@ impl Geohash {
     pub fn center_and_range(self) -> (Coord<f64>, f64, f64) {
         decode_geohash(self)
     }
+
+    /// Returns an iterator over all direct child geohashes of this one.
+    /// Returns None if maximum depth would be exceeded.
+    pub fn children(self) -> Option<impl IntoIterator<Item = Geohash>> {
+        if self.len() < 12 {
+            Some(BASE32_CODES.iter().copied().map(move |c| {
+                let mut out = self;
+                out.digits[out.len()] = c as u8;
+                out.len += 1;
+                out
+            }))
+        } else {
+            None
+        }
+    }
 }
 
 // the alphabet for the base32 encoding used in geohashing
