@@ -3,13 +3,36 @@ use crate::{Coord, GeohashError, Neighbors, Rect};
 use libm::ldexp;
 
 /// A Geohash stores the string representation of the geohash code in an array.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Eq)]
 pub struct Geohash {
     // stores the ascii characters of the geohash
     digits: [u8; 12],
     len: u8,
 }
 
+impl std::hash::Hash for Geohash {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.digits[0..self.len as usize].hash(state);
+    }
+}
+
+impl std::cmp::PartialEq for Geohash {
+    fn eq(&self, other: &Self) -> bool {
+        self.digits[0..self.len as usize] == other.digits[0..other.len as usize]
+    }
+}
+
+impl std::cmp::PartialOrd for Geohash {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.digits[0..self.len as usize].partial_cmp(&other.digits[0..other.len as usize])
+    }
+}
+
+impl std::cmp::Ord for Geohash {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.digits[0..self.len as usize].cmp(&other.digits[0..other.len as usize])
+    }
+}
 impl std::fmt::Display for Geohash {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = self.as_str();
