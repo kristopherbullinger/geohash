@@ -54,6 +54,43 @@ impl Geohash {
         std::str::from_utf8(&self.digits[0..self.len as usize]).unwrap()
     }
 
+    /// Returns a geohash which can be used as an upper bound when
+    /// querying against a sorted list of geocodes for all descendents
+    /// of this geocode.
+    /// ```rust
+    /// let gh = geohash::Geohash::from_str("2hb").unwrap();
+    /// let next = gh.lexicographic_descendants_upper_bound().unwrap();
+    /// assert_eq!(next.as_str(), "2hc");
+    ///
+    ///
+    /// let gh = geohash::Geohash::from_str("2hz").unwrap();
+    /// let next = gh.lexicographic_descendants_upper_bound().unwrap();
+    /// assert_eq!(next.as_str(), "2j");
+    ///
+    /// let gh = geohash::Geohash::from_str("zzzzzz").unwrap();
+    /// let next = gh.lexicographic_descendants_upper_bound();
+    /// assert_eq!(next, None);
+    /// ```
+    pub fn lexicographic_descendants_upper_bound(mut self) -> Option<Geohash> {
+        if self.len() == 0 {
+            return None;
+        }
+
+        for i in (0..self.len()).rev() {
+            let current = self.digits[i];
+            if current == b'z' {
+                continue;
+            }
+            let next_digit = DECODER[current as usize] + 1;
+            self.digits[i] = BASE32_CODES[next_digit as usize] as u8;
+            self.len = (i + 1) as u8;
+            return Some(self);
+        }
+
+        // All characters were max (e.g. "zzzz")
+        None
+    }
+
     /// Decode a geohash string representation into a Geohash.
     pub fn from_str(hash_str: &str) -> Result<Geohash, GeohashError> {
         let bytes = hash_str.as_bytes();
